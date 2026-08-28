@@ -231,7 +231,40 @@ h1{font-size:clamp(44px,7vw,82px);line-height:.98;letter-spacing:-.05em;margin:1
   .step-card .mini{grid-template-columns:1fr}
   h1{font-size:45px}
 }
-</style>
+
+    .problem-question{
+      margin:30px 0 22px;
+      padding:30px 34px;
+      border:1px solid var(--line);
+      border-radius:22px;
+      background:rgba(255,255,255,.86);
+      box-shadow:var(--shadow);
+    }
+    .problem-question .eyebrow{
+      display:block;
+      margin-bottom:10px;
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:var(--teal);
+    }
+    .problem-question p{
+      margin:0;
+      max-width:920px;
+      font-size:clamp(25px,3vw,38px);
+      line-height:1.18;
+      letter-spacing:-.025em;
+      font-weight:750;
+      color:var(--ink);
+    }
+    .problem-requirements{
+      margin-top:18px;
+    }
+    @media(max-width:700px){
+      .problem-question{padding:24px 22px}
+    }
+    </style>
 </head>
 <body>
 
@@ -296,7 +329,7 @@ h1{font-size:clamp(44px,7vw,82px);line-height:.98;letter-spacing:-.05em;margin:1
 <section class="section">
   <div class="container">
     <div class="section-head">
-      <div class="section-label">01 — The problem</div>
+      <div class="section-label">01 — THE PROBLEM</div>
       <div>
         <h2>We couldn't improve service efficiency without knowing why customers were contacting us.</h2>
         <p>
@@ -307,21 +340,22 @@ h1{font-size:clamp(44px,7vw,82px);line-height:.98;letter-spacing:-.05em;margin:1
       </div>
     </div>
 
-    <div class="two-col">
-      <div class="panel">
-        <p class="problem-quote">“Where is Customer Service effort going, and which issues should we fix first?”</p>
-      </div>
-      <div class="panel">
-        <h3>Design requirements</h3>
-        <ul>
-          <li>Handle multiple sources with different text structures.</li>
-          <li>Derive consistent contact reasons from unstructured text.</li>
-          <li>Create a stable, business-usable taxonomy.</li>
-          <li>Scale classification across millions of interactions.</li>
-          <li>Go beyond themes to uncover actionable root causes.</li>
-          <li>Produce signals that can be monitored over time.</li>
-        </ul>
-      </div>
+    <div class="problem-question">
+      <span class="eyebrow">The question to solve</span>
+      <p>Where is Customer Service effort actually going — and which customer issues should we fix first?</p>
+    </div>
+
+    <div class="panel problem-requirements">
+      <h3>Design requirements</h3>
+      <ul>
+        <li>Handle multiple sources with different text structures.</li>
+        <li>Derive consistent contact reasons from unstructured text.</li>
+        <li>Create a stable, business-usable taxonomy.</li>
+        <li>Scale classification across millions of interactions.</li>
+        <li>Go beyond themes to uncover actionable root causes.</li>
+        <li>Produce signals that can be monitored over time.</li>
+      </ul>
+    </div>
   </div>
 </section>
 <section class="section">
