@@ -49,6 +49,16 @@ a{color:inherit}
 h1{font-size:clamp(44px,7vw,82px);line-height:.98;letter-spacing:-.05em;margin:16px 0 22px;max-width:980px}
 .hero p{max-width:800px;font-size:20px;line-height:1.6;color:var(--muted);margin:0}
 .hero .subline{margin-top:22px;font-size:14px;color:#7a8495}
+.author-line{margin:14px 0 18px;font-size:14px;color:var(--muted)}
+.author-line strong{color:var(--ink)}
+.author-line span{padding:0 6px;color:#a0a7b2}
+.contribution-card{margin-top:18px;border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.9);padding:26px 28px;box-shadow:var(--shadow)}
+.contribution-grid{display:grid;grid-template-columns:180px 1fr;gap:28px;align-items:start}
+.contribution-card .eyebrow{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:8px}
+.contribution-card h3{font-size:21px;margin:0;letter-spacing:-.02em}
+.contribution-card p{font-size:14px;line-height:1.65;color:var(--muted);margin:0}
+.contribution-card p + p{margin-top:10px}
+@media(max-width:700px){.contribution-grid{grid-template-columns:1fr;gap:14px}}
 .metrics{
   display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:36px 0 0
 }
@@ -271,6 +281,7 @@ h1{font-size:clamp(44px,7vw,82px);line-height:.98;letter-spacing:-.05em;margin:1
 <header class="hero">
   <div class="container">
     <div class="kicker">Applied NLP &amp; LLM Applications</div>
+    <div class="author-line">Case Study by <strong>Angel Tang</strong> <span>·</span> Applied NLP · LLMs · Customer Intelligence</div>
     <h1>Turning customer conversations into a measurable intelligence system.</h1>
     <p>
       An end-to-end NLP system that transformed high-volume emails, chats and survey feedback into
@@ -319,6 +330,28 @@ h1{font-size:clamp(44px,7vw,82px);line-height:.98;letter-spacing:-.05em;margin:1
           <div class="slabel">Business value</div>
           <b>From contact volume to root-cause action</b>
           <span>Created a measurable view of operational demand to prioritise efficiency improvements, self-service, automation and product fixes.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="contribution-card">
+      <div class="contribution-grid">
+        <div>
+          <div class="eyebrow">Role &amp; Contribution</div>
+          <h3>End-to-end ownership</h3>
+        </div>
+        <div>
+          <p><strong>Role:</strong> Senior Customer Insight Analyst — Applied AI / NLP</p>
+          <p>
+            I owned the overall approach and delivered the majority of the technical implementation—from
+            problem framing and source-specific data preparation through taxonomy design, NLP modelling,
+            validation and translation of model outputs into actionable business insights.
+          </p>
+          <p>
+            I incorporated ideas and contributions from other members of the Data Science team and worked
+            closely with Product and Operations stakeholders to turn the intelligence layer into prioritised
+            improvement opportunities.
+          </p>
         </div>
       </div>
     </div>
