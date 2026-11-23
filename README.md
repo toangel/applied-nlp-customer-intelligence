@@ -1,24 +1,32 @@
 # Applied NLP for Customer Intelligence
 
-A two-stage NLP pipeline that analysed **1.48 million customer interactions** at Viator, producing **15 contact-reason themes** for trend reporting and surfacing **108 granular issues** for root-cause analysis. The pipeline used Python, SQL and BigQuery.
+An applied NLP case study by Angel Tang. I built a pipeline that analysed **1.48 million customer interactions in one year**, classified them into **15 contact-reason themes**, and uncovered **108 recurring issues** that Product and Operations teams could investigate.
 
-```text
-Email, live chat and call transcripts
-  → Channel-specific cleaning and intent extraction
-  → Stage 1 · RoBERTa-large theme classification
-  → Stage 2 · Within-theme grouping by cosine similarity
-```
+**[Read the full technical case study](https://toangel.github.io/applied-nlp-customer-intelligence/index.html)**
 
-**Shared preprocessing.** Keep the first customer email, the first 10 customer chat messages or the early customer speech from a call. Strip channel-specific noise such as quoted replies, system messages and agent dialogue. Use BART-large-CNN for summarisation or FLAN-T5-base for instruction-based extraction to produce a standardised statement of the customer’s primary intent.
+## Business problem
 
-## Stage 1 · Classify the contact reason
+Manually entered Salesforce contact reasons were inconsistent, making it difficult to understand why customers contacted support and which problems were worth fixing first. The pipeline turned unstructured conversations into a consistent view of contact reasons for trend reporting, investigation and prioritisation.
 
-Build the taxonomy on a sample of extracted intents. GPT-4o proposes issue labels and themes, Claude Sonnet independently labels the same intents, and human reviewers resolve disagreements and consolidate the taxonomy into 15 themes.
+## How it works
 
-Fine-tune **RoBERTa-large** to assign each extracted intent to one theme. This confines large-LLM inference to taxonomy discovery and gives high-volume classification a stable set of labels for reporting.
+| Step | Approach |
+| --- | --- |
+| Prepare conversations | Clean email, live chat and call transcripts by channel, retaining early customer-authored content. Use BART-large-CNN or FLAN-T5-base to extract the primary reason for contact. |
+| Build the taxonomy | Use GPT-4o to propose labels on sampled intents and Claude Sonnet to label the same sample independently. Review disagreements with humans and refine the taxonomy into 15 themes. |
+| Classify at scale | Fine-tune RoBERTa-large to assign each extracted intent to one theme. This keeps reporting consistent and limits large-LLM inference to the taxonomy design stage. |
+| Discover recurring issues | Use sentence embeddings and cosine similarity to group related intents within each theme. For example, *Update itinerary* breaks down into duration mismatches, start-time changes and requests to add a departure. |
 
-## Stage 2 · Discover granular issues within each theme
+The production data pipeline used **Python, SQL and BigQuery**.
 
-Encode each intent as a **sentence embedding**. Rank neighbours within its predicted theme by **cosine similarity** and group semantically similar intents into recurring issues. For example, *Update itinerary* splits into duration mismatches, start-time changes and requests for additional departures.
+## Evaluation and monitoring
 
-See the [technical case study](index.html) for architecture, examples and evaluation criteria.
+The evaluation approach combined a stratified, human-labelled sample with **precision and recall by theme**, review of commonly confused labels, and checks on reviewer agreement. For granular issue grouping, reviewers sampled examples to assess whether they described the same underlying problem and pointed to a specific action. Production monitoring tracked shifts in theme volumes and prediction confidence.
+
+## Business impact
+
+Product and Operations could track contact reasons over time, investigate spikes and prioritise product fixes, self-service and automation opportunities. One finding helped identify recurring refund requests suitable for automation. The resulting refund-automation initiative supported **more than $350,000 in annual savings**.
+
+## My contribution
+
+I led the design and delivered most of the technical implementation, from problem framing and data preparation through taxonomy design, modelling and validation. I worked with Data Science, Product and Operations colleagues to turn the findings into prioritised opportunities.
