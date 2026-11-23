@@ -1,98 +1,24 @@
-# Email Classification with RoBERTa – From Insights to Agentic AI 🚀
+# Applied NLP for Customer Intelligence
 
-This project demonstrates how a **RoBERTa large language model** can be fine-tuned to classify large volumes of inbound email communications and uncover actionable operational insights.
+A two-stage NLP pipeline that analysed **1.48 million customer interactions** at Viator, producing **15 contact-reason themes** for trend reporting and surfacing **108 granular issues** for root-cause analysis. The pipeline used Python, SQL and BigQuery.
 
-### 🌍 Business Context
-At Viator (a Tripadvisor company), millions of supplier and customer emails are received globally each year.  
-Manually categorizing these messages was time-consuming and inconsistent, limiting our ability to identify root causes of contact.
+```text
+Email, live chat and call transcripts
+  → Channel-specific cleaning and intent extraction
+  → Stage 1 · RoBERTa-large theme classification
+  → Stage 2 · Within-theme grouping by cosine similarity
+```
 
-To solve this, we built and deployed an **automated email classification system** powered by **RoBERTa-large**, capable of analyzing communications and identifying the main drivers of operator contact — improving customer experience and operational efficiency.
+**Shared preprocessing.** Keep the first customer email, the first 10 customer chat messages or the early customer speech from a call. Strip channel-specific noise such as quoted replies, system messages and agent dialogue. Use BART-large-CNN for summarisation or FLAN-T5-base for instruction-based extraction to produce a standardised statement of the customer’s primary intent.
 
-The insights from this model directly inspired **Viator’s first Agentic AI project**, where an AI agent automatically processes simple supplier-initiated refund requests end-to-end.
+## Stage 1 · Classify the contact reason
 
----
+Build the taxonomy on a sample of extracted intents. GPT-4o proposes issue labels and themes, Claude Sonnet independently labels the same intents, and human reviewers resolve disagreements and consolidate the taxonomy into 15 themes.
 
-### 🧩 Project Overview
+Fine-tune **RoBERTa-large** to assign each extracted intent to one theme. This confines large-LLM inference to taxonomy discovery and gives high-volume classification a stable set of labels for reporting.
 
-| Component | Description |
-|------------|-------------|
-| **Model** | RoBERTa-large fine-tuned for multi-class text classification |
-| **Input** | Cleaned and anonymized email text |
-| **Output** | Predicted theme/category (e.g., refund request, change booking, pricing issue) |
-| **Libraries** | HuggingFace Transformers, PyTorch, Scikit-learn, Pandas |
-| **Deployment** | Model hosted via internal API endpoint for daily classification |
-| **Impact** | Enabled prioritization of operator experience improvements and AI automation use cases |
+## Stage 2 · Discover granular issues within each theme
 
----
+Encode each intent as a **sentence embedding**. Rank neighbours within its predicted theme by **cosine similarity** and group semantically similar intents into recurring issues. For example, *Update itinerary* splits into duration mismatches, start-time changes and requests for additional departures.
 
-### 🧰 Setup
-
-```bash
-git clone https://github.com/<your-username>/email-classification-agentic-ai.git
-cd email-classification-agentic-ai
-pip install -r requirements.txt
----
-
-### 🧪 Training Example
-
-Here’s an example of how the RoBERTa model is fine-tuned on anonymized email data.  
-You can find the complete code inside the [RobertaTraining.ipynb](notebooks/RobertaTraining.ipynb) notebook.
-
-```python
-from transformers import RobertaTokenizer, RobertaForSequenceClassification, Trainer, TrainingArguments
-from sklearn.model_selection import train_test_split
-import pandas as pd
-import torch
-
-# Load data
-df = pd.read_csv("data/sample_emails.csv")
-train_texts, val_texts, train_labels, val_labels = train_test_split(df["email_text"], df["theme"], test_size=0.2)
-
-# Tokenization
-tokenizer = RobertaTokenizer.from_pretrained("roberta-base")
-train_encodings = tokenizer(list(train_texts), truncation=True, padding=True)
-val_encodings = tokenizer(list(val_texts), truncation=True, padding=True)
-
-# Label encoding
-label2id = {label: i for i, label in enumerate(df["theme"].unique())}
-train_labels = [label2id[label] for label in train_labels]
-val_labels = [label2id[label] for label in val_labels]
-
-# Dataset class
-class EmailDataset(torch.utils.data.Dataset):
-    def __init__(self, encodings, labels):
-        self.encodings = encodings
-        self.labels = labels
-    def __getitem__(self, idx):
-        item = {key: torch.tensor(val[idx]) for key, val in self.encodings.items()}
-        item["labels"] = torch.tensor(self.labels[idx])
-        return item
-    def __len__(self):
-        return len(self.labels)
-
-# Prepare datasets
-train_dataset = EmailDataset(train_encodings, train_labels)
-val_dataset = EmailDataset(val_encodings, val_labels)
-
-# Initialize model
-model = RobertaForSequenceClassification.from_pretrained("roberta-base", num_labels=len(label2id))
-
-# Training setup
-training_args = TrainingArguments(
-    output_dir="./results",
-    num_train_epochs=1,
-    per_device_train_batch_size=4,
-    per_device_eval_batch_size=4,
-    evaluation_strategy="epoch",
-    logging_dir="./logs",
-)
-
-# Train model
-trainer = Trainer(
-    model=model,
-    args=training_args,
-    train_dataset=train_dataset,
-    eval_dataset=val_dataset,
-)
-
-trainer.train()
+See the [technical case study](index.html) for architecture, examples and evaluation criteria.
